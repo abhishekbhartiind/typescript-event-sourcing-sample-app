@@ -3,4 +3,5 @@ export default {
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017',
   DB_NAME: process.env.DB_NAME || 'bookstore',
   REDIS_URI: process.env.REDIS_URI || 'redis://localhost:6379',
+  ELASTICSEARCH_URI: process.env.ELASTICSEARCH_URI || 'http://localhost:9200',
 };

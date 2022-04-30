@@ -1,5 +1,6 @@
 import '@interfaces/http/controllers';
 
+import { Client } from '@elastic/elasticsearch';
 import { Application, urlencoded, json } from 'express';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
@@ -9,6 +10,7 @@ import { Db } from 'mongodb';
 import { CreateApplicationCommandHandler } from '@application/commands/application/handlers/create-application-handler';
 import { CreateJobCommandHandler } from '@application/commands/job/handlers/create-job-handler';
 import { ApplicationCreatedEventHandler } from '@application/events/application/handlers/application-created-handler';
+import { ApplicationCreatedEsIndexerEventHandler } from '@application/events/application/handlers/application-created-indexer-handler';
 import { JobCreatedEventHandler } from '@application/events/job/handlers/job-created-handler';
 import { GetAllApplicationsQueryHandler } from '@application/queries/application/handlers/get-all-applications-query-handler';
 import config from '@config/main';
@@ -55,9 +57,11 @@ const initialise = async () => {
   // Event Handlers
   container.bind<IEventHandler<JobCreated>>(TYPES.Event).to(JobCreatedEventHandler);
   container.bind<IEventHandler<ApplicationCreated>>(TYPES.Event).to(ApplicationCreatedEventHandler);
+  container.bind<IEventHandler<ApplicationCreated>>(TYPES.Event).to(ApplicationCreatedEsIndexerEventHandler);
 
   // Prepare persistence components
   container.bind<Db>(TYPES.Db).toConstantValue(db);
+  container.bind<Client>(TYPES.Elasticsearch).toConstantValue(new Client({ node: config.ELASTICSEARCH_URI }));
   container
     .bind<IEventStore>(TYPES.EventStore)
     .to(ApplicationEventStore)

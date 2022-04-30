@@ -1,6 +1,7 @@
 export const TYPES = {
   // Dependencies
   Db: Symbol('Db'),
+  Elasticsearch: Symbol('Elasticsearch'),
   RedisSubscriber: Symbol('RedisSubscriber'),
   Redis: Symbol('Redis'),
   EventBus: Symbol('EventBus'),
@@ -34,4 +35,4 @@ export const EVENT_STREAM_NAMES = {
   Application: Symbol('Application'),
 };
 
-export const SUBSRIPTION_TOPICS = ['Job', 'Application'];
+export const SUBSRIPTION_TOPICS = ['job', 'application'];
