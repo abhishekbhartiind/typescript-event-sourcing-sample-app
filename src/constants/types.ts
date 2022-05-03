@@ -1,5 +1,6 @@
 export const TYPES = {
   // Dependencies
+  Logger: Symbol('Logger'),
   Db: Symbol('Db'),
   KafkaProducer: Symbol('KafkaProducer'),
   KafkaConsumer: Symbol('KafkaConsumer'),

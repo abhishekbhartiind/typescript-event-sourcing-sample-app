@@ -6,6 +6,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import { Redis } from 'ioredis';
 import { Consumer, Kafka, Producer } from 'kafkajs';
 import { Db } from 'mongodb';
+import { Logger } from 'winston';
 
 import { CreateApplicationCommandHandler } from '@application/commands/application/handlers/create-application-handler';
 import { CreateJobCommandHandler } from '@application/commands/job/handlers/create-job-handler';
@@ -33,6 +34,7 @@ import { KafkaEventBus } from '@infrastructure/eventbus/kafka';
 import { RedisEventBus } from '@infrastructure/eventbus/redis';
 import { ApplicationEventStore } from '@infrastructure/eventstore/application-event-store';
 import { JobEventStore } from '@infrastructure/eventstore/job-event-store';
+import { createWinstonLogger } from '@infrastructure/logging/winston';
 import { QueryBus } from '@infrastructure/query-bus';
 import { getRedisClient } from '@infrastructure/redis';
 import { ApplicationRepository } from '@infrastructure/repositories/application-repository';
@@ -41,6 +43,8 @@ import { errorHandler } from '@interfaces/http/middlewares/error-handler';
 
 const initialise = async () => {
   const container = new Container();
+  const winstonLogger: Logger = createWinstonLogger();
+  container.bind<Logger>(TYPES.Logger).toConstantValue(winstonLogger);
 
   // Module Registration
   const db: Db = await createMongodbConnection(config.MONGODB_URI);
@@ -123,7 +127,7 @@ const initialise = async () => {
 
   const apiServer = server.build();
   apiServer.listen(config.API_PORT, () =>
-    console.log('The application is initialised on the port %s', config.API_PORT)
+    winstonLogger.info(`The application is initialised on the port ${config.API_PORT}`)
   );
 
   return container;
